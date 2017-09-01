@@ -171,7 +171,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="maven生命周期简介"><a href="#maven生命周期简介" class="headerlink" title="maven生命周期简介"></a>maven生命周期简介</h2><p>maven有三套生命周期，分别是<code>clean生命周期</code>和<code>default生命周期</code>，以及<code>site生命周期</code>。 三套生命周期本身相互独立，调用其中<code>clean生命周期</code>clean阶段并不会调用<code>default生命周期</code>的其他任何一个阶段。</p>
+        <p><img src="https://d26dzxoao6i3hh.cloudfront.net/items/0U2u1d2T3J2P342B1q2Q/dark.0J361N0k380J.jpg" alt="maven icon"></p>
+<h2 id="maven生命周期简介"><a href="#maven生命周期简介" class="headerlink" title="maven生命周期简介"></a>maven生命周期简介</h2><p>maven有三套生命周期，分别是<code>clean生命周期</code>和<code>default生命周期</code>，以及<code>site生命周期</code>。 三套生命周期本身相互独立，调用其中<code>clean生命周期</code>clean阶段并不会调用<code>default生命周期</code>的其他任何一个阶段。</p>
 <h2 id="clean生命周期"><a href="#clean生命周期" class="headerlink" title="clean生命周期"></a>clean生命周期</h2><p>clean生命周期分为三个阶段（phase），pre-clean, clean, post-clean，当用户调用pre-clean周期的时候，只会执行clean生命周期的pre-clean阶段，当调用clean阶段时，pre-clean和clean阶段会被调用，调用post-clean阶段时，pre-clean、clean、post-clean定三个阶段会被顺序调用。</p>
 <p><code>clean生命周期</code>的目的是清理项目, 包含三个阶段</p>
 <ol>
