@@ -6,11 +6,11 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://blog.da2win.xyz">
-  <title>Da2win&#39;s blog</title>
+  <title>Tag: maven | Da2win&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Da2win&#39;s blog">
-<meta property="og:url" content="http://blog.da2win.xyz/index.html">
+<meta property="og:url" content="http://blog.da2win.xyz/tags/maven/index.html">
 <meta property="og:site_name" content="Da2win&#39;s blog">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Da2win&#39;s blog">
@@ -151,82 +151,34 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-maven生命周期" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
     
-      <header class="article-header">
-        
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/09/01/maven生命周期/" class="archive-article-date">
+  	<time datetime="2017-09-01T01:28:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-01</time>
+</a>
+        </div>
+    	 
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/01/maven生命周期/">maven生命周期</a>
+      <a class="archive-article-title" href="/2017/09/01/maven生命周期/">maven生命周期</a>
     </h1>
   
 
-        
-        <a href="/2017/09/01/maven生命周期/" class="archive-article-date">
-  	<time datetime="2017-09-01T01:28:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-09-01</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="maven生命周期"><a href="#maven生命周期" class="headerlink" title="maven生命周期"></a>maven生命周期</h1><h2 id="maven生命周期简介"><a href="#maven生命周期简介" class="headerlink" title="maven生命周期简介"></a>maven生命周期简介</h2><p>maven有三套生命周期，分别是<code>clean生命周期</code>和<code>default生命周期</code>，以及<code>site生命周期</code>。 三套生命周期本身相互独立，调用其中<code>clean生命周期</code>clean阶段并不会调用<code>default生命周期</code>的其他任何一个阶段。</p>
-<h2 id="clean生命周期"><a href="#clean生命周期" class="headerlink" title="clean生命周期"></a>clean生命周期</h2><p>clean生命周期分为三个阶段（phase），pre-clean, clean, post-clean，当用户调用pre-clean周期的时候，只会执行clean生命周期的pre-clean阶段，当调用clean阶段时，pre-clean和clean阶段会被调用，调用post-clean阶段时，pre-clean、clean、post-clean定三个阶段会被顺序调用。</p>
-<p><code>clean生命周期</code>的目的是清理项目, 包含三个阶段</p>
-<ol>
-<li>pre-clean 执行一些清理前需要完成的工作。</li>
-<li>clean 清理上一次构建生成的文件。</li>
-<li>post-clean 执行一些清理后需要完成的工作</li>
-</ol>
-<h2 id="default生命周期"><a href="#default生命周期" class="headerlink" title="default生命周期"></a>default生命周期</h2><p><code>default生命周期</code>定义了真正构建项目所需要执行的所有步骤,它是所有生命周期中最核心的部分, 其包含的阶段如下:</p>
-<ol>
-<li>validate</li>
-<li>initialize</li>
-<li>generate-sources</li>
-<li>process-sources 处理项目竹资源文件.一般来说, 是对src/main/resources 目录的内容进行变量替换等工作后, 复制到项目输出的主 classpath 目录中.</li>
-<li>generate-resources</li>
-<li>process-resources</li>
-<li>compile 编译项目的主源码. 一般来说, 是对src/main/resources目录下的java文件至项目输出的主classpath目录中.</li>
-<li>process-classes</li>
-<li>generate-test-sources</li>
-<li>process-tetst-sources 处理项目测试资源文件夹, 一般来说, 是对src/test/resources目录中的内容进行变量替换等工作后, 复制到项目输出的测试classpath目录中</li>
-<li>generate-test-resources</li>
-<li>process-test-resources</li>
-<li>test-compile 编译项目的测试代码. 一般来说, 是编译src/test/java目录下的Java文件至项目输出的测试classpath目录中</li>
-<li>process-test-classes</li>
-<li>test</li>
-<li>prepare-package</li>
-<li>package 接受编译好的代码,打包成可发布的版本, 如JAR</li>
-<li>pre-integration-test</li>
-<li>integration-test</li>
-<li>post-integration-test</li>
-<li>verify</li>
-<li>install 将包安装到<code>Maven</code>本地仓库,供本地其他<code>maven</code>项目使用.</li>
-<li>deploy 将最终的包复制到远程仓库,供其他开发人员和<code>maven</code>项目使用</li>
-</ol>
-<h2 id="site生命周期"><a href="#site生命周期" class="headerlink" title="site生命周期"></a>site生命周期</h2><p><code>site生命周期</code>的目的是建立站点和发布项目站点, <code>Maven</code>能够基于<code>POM</code>所包含的信息,自动生成一个友好的站点,方便团队交流和发布项目信息. 该生命周期包含如下阶段(phase):</p>
-<ol>
-<li>pre-site 执行一些在生成项目站点之前需要完成的工作</li>
-<li>site 生成项目站点文档</li>
-<li>post-site 执行一些在生成项目站点之后需要完成的工作.</li>
-<li>site-deploy 将生成的项目站点发布到服务器上.</li>
-</ol>
-<h2 id="命令行和生命周期"><a href="#命令行和生命周期" class="headerlink" title="命令行和生命周期"></a>命令行和生命周期</h2><p>从命令行执行<code>Maven</code>任务的最主要的方式就是调用<code>Maven</code>的生命周期.需要注意的是, 各个生命周期相互独立, 但是一个生命周期的阶段(phase)是有前后依赖关系的.举几个例子:</p>
-<ol>
-<li>$mvn clean: 该命令调用<code>clean生命周期</code>的clean阶段. 实际执行的是<code>clean生命周期</code>的clean阶段</li>
-<li>$mvn test: 该命令调用<code>default生命周期</code>的test阶段, 实际执行的为<code>default生命周期</code>的validate, initialize等, 知道test的所有阶段. 这也证明了为什么在执行测试的时候,项目的代码能够自动得以编译.</li>
-<li>$mvn clean install: 该命令调用<code>clean生命周期</code>的clean阶段和<code>default生命周期</code>的install阶段.实际执行的阶段为<code>clean生命周期</code>的pre-clean,clean阶段,以及<code>default生命周期</code>的validate 至 install 的所有阶段. 该命令结合两个生命周期, 在执行真正的项目构建之之前清理项目是一个很好的实践.</li>
-<li>$mvn clean deploy site-deploy: 该命令调用<code>clean生命周期</code>的clean阶段, <code>default生命周期</code>的deploy阶段,以及<code>site生命周期</code>的site-deploy阶段.实际执行的阶段为<code>clean生命周期</code>的pre-clean, cleanan阶段, d<code>default生命周期</code>的所有阶段,以及<code>site生命周期</code>的所有阶段. 改该命令结合了Maven所有的三个生命周期, 且deploy为<code>default生命周期</code>的最后一个阶段, site-deploy 为site生命周期的最后一个阶段.</li>
-</ol>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -238,112 +190,19 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/09/01/maven生命周期/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
+    </div></section>
+  
+
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/08/31/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2017/08/31/hello-world/" class="archive-article-date">
-  	<time datetime="2017-08-31T07:04:06.798Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/08/31/hello-world/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-  
 
 
           </div>
@@ -365,10 +224,10 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
+		isHome: false,
 		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
