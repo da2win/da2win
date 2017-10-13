@@ -151,6 +151,97 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-tomcat的pipeline执行过程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/13/tomcat的pipeline执行过程/">tomcat的pipeline执行过程</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/13/tomcat的pipeline执行过程/" class="archive-article-date">
+  	<time datetime="2017-10-13T01:12:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>本文主要介绍连接器在调用容器的invoke后的执行流程.</p>
+<h3 id="管道任务"><a href="#管道任务" class="headerlink" title="管道任务"></a>管道任务</h3><blockquote>
+<blockquote>
+<p>相关接口, 位于org.apache.catalina包中的4个相关接口, Pipeline, Valve, ValveContext和Contained.</p>
+</blockquote>
+</blockquote>
+<p>管道中包含<code>servlet</code>容器将要调用的任务. 一个阀表示一个具体的任务. 在<code>servlet</code>容器的管道中, 有一个基础阀, 但是可以添加任意数量的阀. 阀的数量指额外添加的阀数量, 可以通过编辑tomcat的配置文件. 下面显示了一条管道和阀.</p>
+<p><img src="https://d26dzxoao6i3hh.cloudfront.net/items/2D0O1x091b200j3X2P1I/%E7%AE%A1%E9%81%93%E4%B8%8E%E9%98%80.png?v=1416c1e3" alt="pipeline icon"></p>
+<p>阀和过滤器作用一致, 可以处理传递给它的request和response对象. 当一个阀执行完成后, 会调用下一个阀继续执行, 基础阀总是最后被执行的.</p>
+<p>一个servlet容器可以有1条管道. 当调用了容器的<code>invoke()</code>方法后,容器会将处理工作交给管道完成, 而管道会调用第一个阀进行处理, 通过阀中<code>invokeNext()</code>方法继续处理任务, 直至所有的阀处理完毕. 下面是容器的<code>invoke()</code>方法中的伪代码.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">//invoke each valve added to the pipeline</div><div class="line">for (n=0;n&lt;valves.length; n++) &#123;</div><div class="line">    valvv.invoke(...);</div><div class="line">&#125;</div><div class="line">// then, invoke the basic vavle.</div><div class="line">basic.invoke(...);</div></pre></td></tr></table></figure></p>
+<p>但是,tomcat的设计者选择了另外一种实现方法. 通过实现org.apache.catalina下的ValveContext接口来实现阀的遍历执行. 下面是它的工作原理.</p>
+<p>当连接器调用容器的<code>invoke()</code>方法后, 容器中要执行的任务并没有硬编码的写在<code>invoke()</code>方法中, 相反, 容器会调用其管道的<code>invoke()</code>方法.</p>
+<p>现在, 管道必须保证每一个被添加到其中的阀和基础阀都会被执行一次, 这是通过创建一个<code>ValveContext</code>的接口实例来实现的. ValveContext实例作为管道的一个内部类来实现的, 因此, ValveContext接口就可以访问管道的所有成员. <code>ValveContext</code>接口中最重要的方法是invokeNext();<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public void invokeNext(Request request, Response response)</div><div class="line">        throws IOException, ServletException;</div></pre></td></tr></table></figure></p>
+<p><code>Valve</code>接口的<code>invoke()</code>方法的实现类类似如下代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public void invoke(Request request, Response response, ValveContext context) throws IOException, ServletException &#123;</div><div class="line">    // Pass the request and response on to next valve in our pipeline.</div><div class="line">    context.invokeNext(request, response);</div><div class="line">    // Now perform what this valve is suppose to do</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>org.apache.catalina.StandardPipeline是所有servlet容器的中的Pipeline接口的实现. 在tomcat4中, 其中有一个ValveContext接口的内部类实现, 名为StandardPipelineValveContext, 下面是代码清单.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">    protected class StandardPipelineValveContext</div><div class="line">        implements ValveContext &#123;</div><div class="line"></div><div class="line">        protected int stage = 0;</div><div class="line"></div><div class="line">        public String getInfo() &#123;</div><div class="line">            return info;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        public void invokeNext(Request request, Response response)</div><div class="line">            throws IOException, ServletException &#123;</div><div class="line"></div><div class="line">            int subscript = stage;</div><div class="line">            stage = stage + 1;</div><div class="line"></div><div class="line">            // Invoke the requested Valve for the current request thread</div><div class="line">            if (subscript &lt; valves.length) &#123;</div><div class="line">                valves[subscript].invoke(request, response, this);</div><div class="line">            &#125; else if ((subscript == valves.length) &amp;&amp; (basic != null)) &#123;</div><div class="line">                basic.invoke(request, response, this);</div><div class="line">            &#125; else &#123;</div><div class="line">                throw new ServletException</div><div class="line">                    (sm.getString(&quot;standardPipeline.noValve&quot;));</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>invokeNext()</code>方法使用变量<code>subscript</code>和<code>stage</code>标明当前正在调用的阀. 当一次调用<code>invokeNext()</code>方法时,<br><code>subscript</code>为0 <code>stage</code>为1, 会调用valves索引为0(即第一个阀)的阀会被执行, 管道中第一个阀接受<code>ValveContext</code>实例, 调用其<code>invokeNext()</code>方法, 这时<code>subscript</code>的值会变为1, 调用第二个阀, 此后以此类推.</p>
+<p>当从最后一个阀调用<code>invokeNext()</code>方法时, subscript的值等于阀的数量, 这时会调用basicValve(基础阀).</p>
+<p>这就是管道任务的全部执行过程.</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">tomcat, pipeline</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/13/tomcat的pipeline执行过程/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-maven生命周期" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -286,7 +377,7 @@
 
         
         <a href="/2017/08/31/hello-world/" class="archive-article-date">
-  	<time datetime="2017-08-31T07:04:06.798Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-31</time>
+  	<time datetime="2017-08-31T07:04:06.799Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-31</time>
 </a>
         
       </header>
@@ -438,6 +529,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">maven</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">tomcat, pipeline</a>
               </li>
             
             <div class="clearfix"></div>
